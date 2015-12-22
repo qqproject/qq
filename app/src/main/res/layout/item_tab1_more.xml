@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_pop_top"
+    android:paddingLeft="10dp"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/tv_sys"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:paddingTop="10dp"
+        android:paddingBottom="15dp"
+        android:gravity="center_vertical"
+        android:drawablePadding="10dp"
+        android:drawableLeft="@drawable/qq_sys"
+        android:textColor="@android:color/black"
+        android:text="扫一扫" />
+
+    <TextView
+        android:id="@+id/tv_jhy"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:paddingTop="10dp"
+        android:paddingBottom="15dp"
+        android:gravity="center_vertical"
+        android:drawablePadding="10dp"
+        android:drawableLeft="@drawable/qq_jhy"
+        android:textColor="@android:color/black"
+        android:text="加好友" />
+
+    <TextView
+        android:id="@+id/tv_cjtlz"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:paddingTop="10dp"
+        android:paddingBottom="15dp"
+        android:gravity="center_vertical"
+        android:drawablePadding="10dp"
+        android:drawableLeft="@drawable/qq_cjtlz"
+        android:textColor="@android:color/black"
+        android:text="创建讨论组        " />
+
+    <TextView
+        android:id="@+id/tv_fsddn"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:paddingTop="10dp"
+        android:paddingBottom="15dp"
+        android:gravity="center_vertical"
+        android:drawablePadding="10dp"
+        android:drawableLeft="@drawable/qq_fsddn"
+        android:textColor="@android:color/black"
+        android:text="发送到电脑" />
+
+    <TextView
+        android:id="@+id/tv_mdmkc"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:paddingTop="10dp"
+        android:paddingBottom="15dp"
+        android:gravity="center_vertical"
+        android:drawablePadding="10dp"
+        android:drawableLeft="@drawable/qq_mdmkc"
+        android:textColor="@android:color/black"
+        android:text="面对面快传" />
+
+    <TextView
+        android:id="@+id/tv_sq"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:paddingTop="10dp"
+        android:paddingBottom="15dp"
+        android:gravity="center_vertical"
+        android:drawablePadding="10dp"
+        android:drawableLeft="@drawable/qq_sq"
+        android:textColor="@android:color/black"
+        android:text="收钱" />
+
+</LinearLayout>
