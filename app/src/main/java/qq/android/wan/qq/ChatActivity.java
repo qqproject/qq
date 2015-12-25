@@ -3,9 +3,11 @@ package qq.android.wan.qq;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.PowerManager;
@@ -16,6 +18,7 @@ import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -60,10 +63,10 @@ import qq.android.wan.qq.chat.VoicePlayClickListener;
  */
 public class ChatActivity extends Activity implements View.OnClickListener, EMEventListener {
     public static final int REQUEST_CODE_CAMERA = 18;
-
+    public static final int REQUEST_CODE_LOCAL = 19;
     private EditText et_content;
     private Button btn_send, btn_more;
-    private ImageView img_voice, img_expression, img_mic, img_camera;
+    private ImageView img_voice, img_expression, img_mic, img_camera,img_picture;
     private String str_content;
     private TextView tv_pass_say, tv_back, tv_nick;
     private LinearLayout layout_more, layout_expression;
@@ -123,6 +126,7 @@ public class ChatActivity extends Activity implements View.OnClickListener, EMEv
         img_mic = (ImageView) findViewById(R.id.img_mic);
         layout_mic = (RelativeLayout) findViewById(R.id.layout_mic);
         img_camera = (ImageView) findViewById(R.id.img_camera);
+        img_picture=(ImageView)findViewById(R.id.img_picture);
         tv_nick.setText("我是" + MyApplication.user + "   在和" + toChatUser + "聊天");
 
     }
@@ -206,6 +210,9 @@ public class ChatActivity extends Activity implements View.OnClickListener, EMEv
         vp_expression.setAdapter(new ExpressionViewPagerAdapter(gridViews));
     }
 
+    /**
+     * 点击了表情里的删除那个表情
+     */
     private void clickDeleteExpression() {
         // 删除文字或者表情
         if (!TextUtils.isEmpty(et_content.getText())) {
@@ -250,7 +257,7 @@ public class ChatActivity extends Activity implements View.OnClickListener, EMEv
         btn_send.setOnClickListener(this);
         img_expression.setOnClickListener(this);
         img_camera.setOnClickListener(this);
-
+        img_picture.setOnClickListener(this);
         et_content.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -313,11 +320,28 @@ public class ChatActivity extends Activity implements View.OnClickListener, EMEv
                 break;
             case R.id.img_camera:
                 clickFromCamera();
-
+                break;
+            case R.id.img_picture:
+                selectPicFromLocal();
                 break;
         }
     }
+    /**
+     * 从图库获取图片
+     */
+    public void selectPicFromLocal() {
+        Intent intent;
+        if (Build.VERSION.SDK_INT < 19) {
+            intent = new Intent(Intent.ACTION_GET_CONTENT);
+            intent.setType("image/*");
 
+        } else {
+            intent = new Intent(
+                    Intent.ACTION_PICK,
+                    android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        }
+        startActivityForResult(intent, REQUEST_CODE_LOCAL);
+    }
     private void clickFromCamera() {
 
         if (isExitsSdcard()) {
@@ -564,7 +588,46 @@ public class ChatActivity extends Activity implements View.OnClickListener, EMEv
         if (requestCode == REQUEST_CODE_CAMERA) { // 发送照片
             if (cameraFile != null && cameraFile.exists())
                 sendPicture(cameraFile.getAbsolutePath());
+        }else if (requestCode == REQUEST_CODE_LOCAL) { // 发送本地图片
+            if (data != null) {
+                Uri selectedImage = data.getData();
+                if (selectedImage != null) {
+                    sendPicByUri(selectedImage);
+                }
+            }
         }
+    }
+    private void sendPicByUri(Uri selectedImage) {
+        String[] filePathColumn = { MediaStore.Images.Media.DATA };
+        Cursor cursor = getContentResolver().query(selectedImage,
+                filePathColumn, null, null, null);
+        String st8 = "不能找到图片";
+        if (cursor != null) {
+            cursor.moveToFirst();
+            int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+            String picturePath = cursor.getString(columnIndex);
+            cursor.close();
+            cursor = null;
+
+            if (picturePath == null || picturePath.equals("null")) {
+                Toast toast = Toast.makeText(this, st8, Toast.LENGTH_SHORT);
+                toast.setGravity(Gravity.CENTER, 0, 0);
+                toast.show();
+                return;
+            }
+            sendPicture(picturePath);
+        } else {
+            File file = new File(selectedImage.getPath());
+            if (!file.exists()) {
+                Toast toast = Toast.makeText(this, st8, Toast.LENGTH_SHORT);
+                toast.setGravity(Gravity.CENTER, 0, 0);
+                toast.show();
+                return;
+
+            }
+            sendPicture(file.getAbsolutePath());
+        }
+
     }
 
     private void sendPicture(final String filePath) {
